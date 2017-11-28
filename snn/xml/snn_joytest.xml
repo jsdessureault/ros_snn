@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SNN equation="" name="snn_joytest" synapse_weight="1.0" synapse_delay="1.0" input_drive_current="0.1"
+	tau="10" threshold="v>0.8" reset="v=0" refractory="5" sim_lenght="50">
+
+	<layer type="sensory" name="sensory">
+		<neuron id="0">Axe 1 Up</neuron>
+		<neuron id="1">Axe 1 Down</neuron>
+		<neuron id="2">Axe 2 Up</neuron>
+		<neuron id="3">Axe 2 Down</neuron>
+	</layer>
+	<layer type="inter" name="inter">
+		<neuron id="0" synapse="0" layer="sensory" weight="1.0">Inter 0</neuron>
+		<neuron id="1" synapse="1" layer="sensory" weight="1.0">Inter 1</neuron>
+		<neuron id="2" synapse="2" layer="sensory" weight="0.2">Inter 2</neuron>
+		<neuron id="3" synapse="3" layer="sensory" weight="0.2">Inter 3</neuron>
+	</layer>
+	<layer type="motor" name="motor">
+		<neuron id="0"  synapse="0, 1" layer="inter" weight="0.5, 0.5">Axe 1</neuron>
+		<neuron id="1"  synapse="2, 3" layer="inter" weight="0.5, 0.5">Axe 2</neuron>
+	</layer>
+
+</SNN>

@@ -25,16 +25,25 @@ topics_to_convert = rospy.get_param("~topics_to_convert")
 p_topic = []
 p_type = []
 p_field = []
+p_min = []
+p_max = []
 out_topic = []
 for x in range (0, topics_to_convert):
     p_topic.append(rospy.get_param("~input_topic_"+str(x+1))) 
     p_type.append(rospy.get_param("~topic_type_"+str(x+1)))
     p_field.append(rospy.get_param("~input_field_"+str(x+1)))
+    p_min.append(rospy.get_param("~input_min_"+str(x+1)))
+    p_max.append(rospy.get_param("~input_max_"+str(x+1)))
+
+def MinMax(value_to_normalize, min, max):
+    normalized_value = float((value_to_normalize - min) / (max - min))
+    return normalized_value
 
 def callback(data, neuron_nb):
     #rospy.loginfo(data)
     field = eval("data"+p_field[neuron_nb])
-    converted_value = float(field) 
+    converted_value = float(field)
+    converted_value = MinMax(converted_value, p_min[neuron_nb], p_max[neuron_nb])
     #rospy.loginfo("Le callback publie la valeur %f sur le topic.", converted_value)
     out_topic[neuron_nb].publish(str(converted_value))
     #print "Publie: " + str(converted_value) + " sur " + str(neuron_nb)

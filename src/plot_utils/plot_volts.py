@@ -3,16 +3,18 @@ import rospy
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
+import sys
 from std_msgs.msg import Float32, Float32MultiArray, Int16
+from lxml import etree
 
 node = "node_volt_plot"
 rospy.init_node(node, anonymous=True)
 rospy.loginfo(node)
 
-nb_output_neurons = rospy.get_param("~motor_neurons")
 SNNname = rospy.get_param("~SNNname")
-#nb_output_neurons = rospy.get_param("/plot_volts/motor_neurons")
-#SNNname = rospy.get_param("/plot_volts/SNNname")
+pathSNN = rospy.get_param("~path")
+xml = rospy.get_param("~xml")
+
 simulation_length = 1
 
 x_lim = 1
@@ -23,6 +25,11 @@ times = []
 iTime = []
 topics_motor = []
 plot_array = []
+
+sensory_neurons = 0
+inter_neurons = 0
+motor_neurons = 0 
+inter_layers = 0
 
 fig1 = plt.figure()
 ax1 = fig1.add_subplot(111)
@@ -36,12 +43,26 @@ plt.xlim(0,x_lim)
 plt.grid(True)
 #legend = plt.legend()
 
+
+def count_neurons():
+    global tree, sensory_neurons, inter_neurons, motor_neurons, inter_layers
+    # Defining number of each layer
+    for neuron in tree.xpath("/SNN/layer/neuron"):
+        layer_type = neuron.getparent().get("type")
+        if layer_type == "sensory":
+            sensory_neurons+=1
+        if layer_type == "inter":
+            inter_neurons+=1
+            inter_layers = 1
+        if layer_type == "motor":
+            motor_neurons+=1
+
 def init_iTime():
-	for neuron_nb in range (0,nb_output_neurons):
+	for neuron_nb in range (0,motor_neurons):
 		iTime.append(0)
 
 def init_volts_and_times():
-	for neuron_nb in range (0,nb_output_neurons):
+	for neuron_nb in range (0,motor_neurons):
 		volts.append([])
 		times.append([])
 	
@@ -75,10 +96,20 @@ def callbackSimulationLenght(data):
 	simulation_length = data.data
 	plt.title(title + " Simulation length: " + str(simulation_length))
 
+
+xml_file = pathSNN + "xml/" + xml
+rospy.loginfo("xml:" + xml_file)
+try:
+    tree = etree.parse(xml_file)
+    count_neurons()
+except:
+    rospy.loginfo("Error XML file: " + xml_file)    
+    sys.exit(1)
+
 # Initialize arrays
 init_volts_and_times()
 
-for neuron_nb in range (0,nb_output_neurons):
+for neuron_nb in range (0,motor_neurons):
 	topics_motor.append(rospy.Subscriber('/motor_volts_'+SNNname+str(neuron_nb+1), Float32MultiArray, callbackVolts, neuron_nb))
 
 topic_simulation_lenght = rospy.Subscriber('/topic_simulation_lenght_'+SNNname, Int16, callbackSimulationLenght)
@@ -87,11 +118,11 @@ def update_line(num, data, ax):
 
 	# Get the smaller lenght of the arrays, and use only those data to plot.  If not: xdata and ydata must be the same (error). 
 	smaller = 999999
-	for neuron_nb in range (0, nb_output_neurons): 	
+	for neuron_nb in range (0, motor_neurons): 	
 		if len(volts[neuron_nb]) < smaller:
 			smaller = len(volts[neuron_nb])
   
-	for neuron_nb in range (0, nb_output_neurons): 	
+	for neuron_nb in range (0, motor_neurons): 	
 		#rospy.loginfo("Upadate frame: " + str(len(times[neuron_nb])) + " " + str(len(volts[neuron_nb])))		
 		plot_array[neuron_nb].set_data(times[neuron_nb][:smaller], volts[neuron_nb][:smaller])
 		plot_array[neuron_nb].set_label("Neuron: " + str(neuron_nb+1))
@@ -101,7 +132,7 @@ def update_line(num, data, ax):
 
 
 # Continue defining graphic
-for neuron_nb in range(0, nb_output_neurons):
+for neuron_nb in range(0, motor_neurons):
 	plot_tmp, = ax1.plot(times[neuron_nb], volts[neuron_nb])
 	plot_array.append(plot_tmp)
 

@@ -1,34 +1,23 @@
 <launch>
 	<node name="plot_volts" pkg="ros_snn" type="plot_volts.py" output="screen" respawn="false">
-		<param name="motor_neurons" type="int" value="4"/>
+		<param name="path" value="/home/pi/ros_catkin_ws/src/ros_snn/snn/"/>     <!-- path where the trained SNN is saved -->   
+		<param name="xml" value="snn_joytest.xml"/> 			    <!-- Name of the xml file -->
 		<param name="SNNname" value="joytest"/>
 	</node>
 	<node name="plot_spikes" pkg="ros_snn" type="plot_spikes.py" output="screen" respawn="false">
-		<param name="motor_neurons" type="int" value="4"/>
 		<param name="SNNname" value="joytest"/>
+		<param name="path" value="/home/pi/ros_catkin_ws/src/ros_snn/snn/"/>     <!-- path where the trained SNN is saved -->   
+		<param name="xml" value="snn_joytest.xml"/> 			    <!-- Name of the xml file -->
 	</node>
  	<node name="plot_input" pkg="ros_snn" type="plot_input.py" output="screen" respawn="false">
-		<param name="input_neurons" type="int" value="4"/>
+		<param name="path" value="/home/pi/ros_catkin_ws/src/ros_snn/snn/"/>     <!-- path where the trained SNN is saved -->   
+		<param name="xml" value="snn_joytest.xml"/> 			    <!-- Name of the xml file -->
 		<param name="SNNname" value="joytest"/>
 	</node>
 	<node name="plot_connectivity" pkg="ros_snn" type="plot_connectivity.py" output="screen" respawn="false" required="true">
     		<param name="path" value="/home/pi/ros_catkin_ws/src/ros_snn/snn/"/>     <!-- path where the trained SNN is saved -->   
 		    <param name="SNNname" value="joytest"/> 			    <!-- Name of the SNN -->
-		    <param name="xml" value="snn_joytest.xml"/> 			    <!-- Name of the xml file -->
-		    <param name="verbose" type="bool" value="True"/>		<!-- Will display process if True -->	
-		    <param name="sensory_neurons" type="int" value="6"/>	<!-- Number of sensory neurons -->
-		    <param name="motor_neurons" type="int" value="6"/>		<!-- Number of motor neurons -->
-		    <param name="inter_neurons" type="int" value="0"/>	    <!-- Number of inter neurons -->
-		    <param name="inter_layers" type="int" value="0"/>	    <!-- Number of layers of inter neurons -->
-		    <param name="synapse_weight" value="1.0"/>	            <!-- Synapse weight value -->
-		    <param name="synapse_delay" type="int" value="1"/>      <!-- Synapse delay value -->
-		    <param name="synapse_condition" value="i==j"/>	        <!-- Synapse connexion condition -->
-		    <param name="input_drive_current" value="0.1"/>	        <!-- Input drive current -->
-		    <param name="tau" type="int" value="10"/>			    <!-- Tau constant -->
-		    <param name="threshold" value="v>0.8"/>			        <!-- The spike threshold  -->
-		    <param name="reset" value="v = 0"/>			            <!-- The reset value after a spike  -->
-		    <param name="refractory" type="int" value="5"/> 	    <!-- The refractory time -->
-		    <param name="simulation_lenght" type="int" value="50"/> <!-- The simlation lenght -->  
+		    <param name="xml" value="snn_joytest.xml"/> 			    <!-- Name of the xml file --> 
   	</node>
 
 </launch>

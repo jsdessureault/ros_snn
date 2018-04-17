@@ -21,10 +21,15 @@
 		<neuron id="1" synapse="1" layer="sensory" weight="1.0">Inter 1</neuron>
 		<neuron id="2" synapse="2" layer="sensory" weight="1.0">Inter 2</neuron>
 		<neuron id="3" synapse="3" layer="sensory" weight="1.0">Inter 3</neuron>
+
+		<neuron id="4" synapse="0" layer="inter" weight="1.0">Inter 4</neuron>
+		<neuron id="5" synapse="1" layer="inter" weight="1.0">Inter 5</neuron>
+		<neuron id="6" synapse="2" layer="inter" weight="1.0">Inter 6</neuron>
+		<neuron id="7" synapse="3" layer="inter" weight="1.0">Inter 7</neuron>
 	</layer>
 	<layer type="motor" name="motor">
-		<neuron id="0"  synapse="0, 2" layer="inter" weight="0.5, 0.5">Motor 1</neuron>
-		<neuron id="1"  synapse="1, 3" layer="inter" weight="0.5, 0.5">Motor 2</neuron>
+		<neuron id="0"  synapse="4, 6" layer="inter" weight="0.5, 0.5">Motor 1</neuron>
+		<neuron id="1"  synapse="5, 7" layer="inter" weight="0.5, 0.5">Motor 2</neuron>
 	</layer>
 
 </SNN>

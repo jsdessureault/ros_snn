@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SNN 
+	equation="" 
+	name="snn_joytest" 
+	synapse_delay="1.0" 
+	input_drive_current="0.1"
+	tau="10" 
+	threshold="v>0.8" 
+	reset="v=0" 
+	refractory="5" 
+	sim_lenght="5">
+
+	<layer type="sensory" name="sensory">
+		<neuron id="0">Axe 1 Up</neuron>
+		<neuron id="1">Axe 1 Down</neuron>
+		<neuron id="2">Axe 2 Up</neuron>
+		<neuron id="3">Axe 2 Down</neuron>
+	</layer>
+	<layer type="inter" name="inter">
+		<neuron id="0" synapse="0" layer="sensory" weight="1.0">Inter 0</neuron>
+		<neuron id="1" synapse="1" layer="sensory" weight="1.0">Inter 1</neuron>
+		<neuron id="2" synapse="2" layer="sensory" weight="1.0">Inter 2</neuron>
+		<neuron id="3" synapse="3" layer="sensory" weight="1.0">Inter 3</neuron>
+	</layer>
+	<layer type="motor" name="motor">
+		<neuron id="0"  synapse="0" layer="inter" weight="0.5">Motor 1</neuron>
+		<neuron id="1"  synapse="0" layer="inter" weight="0.5">Motor 2</neuron>
+		<neuron id="2"  synapse="0" layer="inter" weight="0.5">Motor 1</neuron>
+		<neuron id="3"  synapse="0" layer="inter" weight="0.5">Motor 2</neuron>
+		<neuron id="4"  synapse="0" layer="inter" weight="0.5">Motor 1</neuron>
+		<neuron id="5"  synapse="1" layer="inter" weight="0.5">Motor 2</neuron>
+		<neuron id="6"  synapse="1" layer="inter" weight="0.5">Motor 1</neuron>
+		<neuron id="7"  synapse="1" layer="inter" weight="0.5">Motor 2</neuron>
+		<neuron id="8"  synapse="1" layer="inter" weight="0.5">Motor 1</neuron>
+		<neuron id="9"  synapse="1" layer="inter" weight="0.5">Motor 2</neuron>
+		<neuron id="10"  synapse="2" layer="inter" weight="0.5">Motor 1</neuron>
+		<neuron id="11"  synapse="2" layer="inter" weight="0.5">Motor 2</neuron>
+		<neuron id="12"  synapse="2" layer="inter" weight="0.5">Motor 1</neuron>
+		<neuron id="13"  synapse="2" layer="inter" weight="0.5">Motor 2</neuron>
+		<neuron id="14"  synapse="2" layer="inter" weight="0.5">Motor 1</neuron>
+		<neuron id="15"  synapse="3" layer="inter" weight="0.5">Motor 2</neuron>
+		<neuron id="16"  synapse="3" layer="inter" weight="0.5">Motor 1</neuron>
+		<neuron id="17"  synapse="3" layer="inter" weight="0.5">Motor 2</neuron>
+		<neuron id="18"  synapse="3" layer="inter" weight="0.5">Motor 2</neuron>
+		<neuron id="19"  synapse="3" layer="inter" weight="0.5">Motor 2</neuron>
+
+	</layer>
+
+</SNN>

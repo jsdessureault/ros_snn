@@ -37,7 +37,7 @@ ax1 = fig1.add_subplot(111)
 title = "MOTOR voltage for "+SNNname
 plt.title(title)
 plt.xlabel("Frames")
-plt.ylim(-0.2, 1.2)
+plt.ylim(-1.2, 1.2)
 plt.ylabel("mVolts")
 plt.xlim(0,x_lim)
 plt.grid(True)

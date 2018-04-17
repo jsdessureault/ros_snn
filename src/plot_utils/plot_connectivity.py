@@ -16,6 +16,7 @@ import time
 import string
 from lxml import etree
 import matplotlib.pyplot as plt
+import random as rnd
 
 # Registering node to ROS
 node = "node_connectivity_plot"
@@ -23,10 +24,11 @@ rospy.init_node(node, anonymous=True)
 rospy.loginfo(node)
 
 # Retriving parameters from launcher
-verbose = rospy.get_param("~verbose")
 pathSNN = rospy.get_param("~path")
 xml = rospy.get_param("~xml")
 SNNname = rospy.get_param("~SNNname")
+
+verbose = True
 
 sensory_neurons = 0
 motor_neurons = 0
@@ -52,6 +54,7 @@ rospy.loginfo("path: " + pathSNN)
 #rospy.init_node('node_plot_connectivity_'+SNNname, anonymous=True)
 #rospy.loginfo("SNN - Plot connectivity - " + SNNname)
 
+
 # Function returning the layer index
 def layer_index(layer):
     global SENSORY_LAYER, MOTOR_LAYER
@@ -75,6 +78,20 @@ def nb_neuron(layer_no):
         return motor_neurons
     return -1
 
+# Function return a certain offset for the inter neurons
+def offset(layer, neuron):
+    global INTER_LAYER
+    if layer == INTER_LAYER:
+        maxi = float(nb_neuron(layer))
+        middle = float(maxi / 2.0)
+        current = float(neuron)
+        value = float(abs(current - middle) / middle)
+        value = pow(value,2) 
+        value = value - 0.5
+        print "Offset: " + str(value)
+        return value
+    return 0.0
+
 # Define neurons positions in the graph
 neurons_x = []
 neurons_y = []    
@@ -90,6 +107,7 @@ if xml == "":
 
 xml_file = pathSNN + "xml/" + xml
 rospy.loginfo("xml:" + xml_file)
+
 try:
 
     tree = etree.parse(xml_file)
@@ -122,8 +140,9 @@ try:
         neurons_names.append(neuron.text)
     
     # Constants
-    SENSORY_LAYER = 0             # input layer index
-    MOTOR_LAYER = inter_layers + 2 - 1    # Motor layer index:  inter layer +  1 sensory layer + 1 motor layer (- 1 because the index starts at 0).
+    SENSORY_LAYER = 0       
+    INTER_LAYER = 1
+    MOTOR_LAYER = 2 
     
     rospy.loginfo("Sensory neurons " + str(sensory_neurons))
     rospy.loginfo("Inter layers " + str(inter_layers))
@@ -131,17 +150,16 @@ try:
     rospy.loginfo("Motor neurons " + str(motor_neurons))
         
     for layer_no in range(SENSORY_LAYER,MOTOR_LAYER+2):
-        print "Processing layer #" + str(layer_no)
+        #print "Processing layer #" + str(layer_no)
         for neuron_no in range(0, nb_neuron(layer_no)):
             #print "...Processing neuron #" + str(neuron_no) + " of layer #" + str(layer_no)
-            neurons_y.append(layer_no)
+            neurons_y.append(layer_no+offset(layer_no, neuron_no))
             neurons_x.append(neuron_no)
-            #print "Neuron position: " + str(layer_no) + ", " + str(neuron_no)
 
     # Define synapses links between the neurons
     nb_synapses = 0
     for neuron in tree.xpath("/SNN/layer/neuron"):
-        layer_type = neuron.getparent().get("type")
+        layer_type_to = neuron.getparent().get("type")
         neuron_id = neuron.get("id")
         synapse_id = neuron.get("synapse")         
         if synapse_id != None:
@@ -150,14 +168,16 @@ try:
             synapse_weight_tmp = str_tmp.split(",")
             i = 0
             for syn in synapse_id.split(","):
-                #print "...Processing synapse #" + str(nb_synapses)
-                synapse_layer_from_to.append((layer_index(layer_type)-1, layer_index(layer_type)))
+                print "...Processing synapse #" + str(nb_synapses)
+                sl = layer_index(synapse_layer)
+                nl = layer_index(layer_type_to)
+                synapse_layer_from_to.append((sl+offset(sl,int(syn)), nl+offset(nl, int(neuron_id))))
                 synapse_neuron_from_to.append((int(syn), int(neuron_id)))
                 synapse_weight.append(synapse_weight_tmp[i])
                 #print "nb_synapses: " + str(nb_synapses) + " W: " + str(synapse_weight[nb_synapses]) 
                 i += 1
-                nb_synapses += 1
-        
+                nb_synapses += 1     
+ 
 except:
     rospy.loginfo("Error parsing XML file: " + xml_file)    
     sys.exit(1)
@@ -182,14 +202,18 @@ for i in range(0, nb_synapses):
     #print str(i) + " y: " +str(py) + " x: " + str(px) + " w: " + str(synapse_weight[i])
     plt.annotate('W: ' +str(synapse_weight[i]), xy=(px,py) , xytext=(px,py)) 
 
-plt.title("Connectivity - " + name)
+#plt.title("Connectivity - " + name)
+#plt.margins(y=0.8)
+plt.subplots_adjust(top=0.75)
 plt.suptitle( 
-    "Input drive current: " + str(input_drive_current) + 
-    "Threshold - " + str(threshold_value) +
-    "Tau - " + str(tau) +
-    "Refractory - " + str(refractory_value) +
-    "Reset - " + str(reset_value) +
-    "Simulation lenght - " + str(simulation_lenght_int))
+    "Connectivity - " + name + 
+    "\nInput drive current: " + str(input_drive_current)  + " mV" + 
+    "\nThreshold: " + str(threshold_value)  + " mV" +
+    "\nTau: " + str(tau)  + " ms" +
+    "\nRefractory: " + str(refractory_value)  + " ms" +
+    "\nReset: " + str(reset_value) + " ms" + 
+    "\nSimulation lenght: " + str(simulation_lenght_int) + " ms",
+    ha='center', fontsize=8)
 
 # Remove ticks (axis scaling) and axis
 plt.xticks([],[])

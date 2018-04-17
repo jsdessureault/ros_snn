@@ -20,6 +20,7 @@ x_lim = simulation_length
 
 volts = []
 times = []
+
 #topics_input = []
 plot_array = []
 
@@ -34,7 +35,7 @@ ax1 = fig1.add_subplot(111)
 title = "SENSORY voltage for "+SNNname 
 plt.title(title)
 plt.xlabel("Frames")
-plt.ylim(-1.1, 1.1)
+plt.ylim(0, 1.1)
 plt.ylabel("mVolts")
 plt.xlim(0,x_lim)
 plt.grid(True)
@@ -56,22 +57,22 @@ def init_volts_and_times():
 	for neuron_nb in range (0,sensory_neurons):
 		volts.append([])
 		times.append([])
-	
-def callback_input(data, neuron_nb):
-        global simulation_length
-	value = float(data.data)
-	#print "CALLBACK INPUT: " + str(value)
+        
+
+def reinit_if_needed(neuron_nb):
+	global simulation_length
 	if len(volts[neuron_nb]) >= simulation_length:
 		del times[neuron_nb][:]
 		del volts[neuron_nb][:]
-
-	# Assign voltage
+        
+    
+def callback_input(data, neuron_nb):
+	global simulation_length
+	value = float(data.data)
+	#print "CALLBACK INPUT: " + str(value)
+	reinit_if_needed(neuron_nb)
 	volts[neuron_nb].append(value)
-	#print volts[neuron_nb]
-	# Assing time and divide by simulation lenght
 	times[neuron_nb].append(len(volts[neuron_nb]))
-	#print times[neuron_nb]
-	#print "-----"
 
 
 xml_file = pathSNN + "xml/" + xml
@@ -103,7 +104,7 @@ def update_line(num, data, ax):
 	for neuron_nb in range (0, sensory_neurons): 	
 		#rospy.loginfo("Upadate frame: " + str(len(times[neuron_nb])) + " " + str(len(volts[neuron_nb])))	
 		plot_array[neuron_nb].set_data(times[neuron_nb][:smaller], volts[neuron_nb][:smaller])
-		plot_array[neuron_nb].set_label("Input neuron: " + str(neuron_nb+1))
+		plot_array[neuron_nb].set_label("Neuron: " + str(neuron_nb+1))
 		legend = plt.legend()
 
 	return ax , 

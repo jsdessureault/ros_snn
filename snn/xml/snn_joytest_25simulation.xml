@@ -8,7 +8,7 @@
 	threshold="v>0.8" 
 	reset="v=0" 
 	refractory="5" 
-	sim_lenght="5">
+	sim_lenght="25">
 
 	<layer type="sensory" name="sensory">
 		<neuron id="0">Axe 1 Up</neuron>

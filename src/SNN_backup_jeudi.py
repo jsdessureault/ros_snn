@@ -9,7 +9,6 @@ Python version 2.7
 from brian2 import *
 prefs.codegen.target = "cython"
 
-import os
 import sys
 import rospy
 import numpy as np
@@ -33,12 +32,12 @@ topics_motor_spikes = []
 
 # Constants
 SENSORY_LAYER = 0             # input layer index
-INTER_LAYER = 1
-MOTOR_LAYER = 2    # Motor layer index
+MOTOR_LAYER = 0    # Motor layer index
 
 # Global variables
 sensory_neurons = 0
 inter_neurons = 0
+inter_layers = 0
 motor_neurons = 0
 synapse_delay = 0
 input_drive_current = 0
@@ -107,16 +106,18 @@ def Assing_XML():
     sensory_neurons=0
     inter_neurons=0
     motor_neurons=0 
-    inter_layers = 0
+    inter_layers = 1
     for neuron in tree.xpath("/SNN/layer/neuron"):
         layer_type = neuron.getparent().get("type")
+        print layer_type
         if layer_type == "sensory":
             sensory_neurons+=1
         if layer_type == "inter":
             inter_neurons+=1
         if layer_type == "motor":
             motor_neurons+=1
-           
+    MOTOR_LAYER = inter_layers + 1
+
 
 def Display_Parameters():
     # Displaying parameters to console
@@ -129,6 +130,7 @@ def Display_Parameters():
     rospy.loginfo("sensory_neurons: " + str(sensory_neurons))
     rospy.loginfo("motor_neurons: " + str(motor_neurons))
     rospy.loginfo("inter_neurons: " + str(inter_neurons))
+    rospy.loginfo("inter_layers: " + str(inter_layers))
     rospy.loginfo("synapse_delay: " + synapse_delay)
     rospy.loginfo("input_drive_current: " + str(input_drive_current))
     rospy.loginfo("tau: " + str(tau))
@@ -169,7 +171,8 @@ def display_chrono(start, label):
 
 # Function returning the layer index
 def layer_index(layer):
-    global SENSORY_LAYER, MOTOR_LAYER, INTER_LAYER
+    global SENSORY_LAYER, MOTOR_LAYER
+    INTER_LAYER = 1
     layer_index = -1
     if layer == "sensory":
         layer_index = SENSORY_LAYER
@@ -182,11 +185,11 @@ def layer_index(layer):
 # Display the message if verbose mode    
 def Display(msg):
     if verbose:
-        print(msg)
+        rospy.loginfo(msg)
 
 # Create the neurons
 def Create_Neurons():
-    global SENSORY_LAYER, MOTOR_LAYER, sensory_neurons, equation, threshold_value, reset_value, refractory_value, inter_neurons, motor_neurons
+    global SENSORY_LAYER, MOTOR_LAYER, sensory_neurons, equation, threshold_value, reset_value, refractory_value
     Display("Creating SNN...")
     for x in range(0, sensory_neurons):
         frames_in.append(0.0)
@@ -199,12 +202,22 @@ def Create_Neurons():
         if layer == MOTOR_LAYER: 
             neurons.append(NeuronGroup(motor_neurons, equation, threshold=threshold_value, reset=reset_value, refractory=refractory_value, method='linear'))
             Display("Assigning MOTOR layer: " + str(layer))
-        if layer == INTER_LAYER:
-            # Each layer must have at leat on neuron. If there is 0, we change it to 1 (that won't be connected). 
-            if inter_neurons == 0:
-                inter_neurons = 1
+        if layer < MOTOR_LAYER and layer > SENSORY_LAYER:
             neurons.append(NeuronGroup(inter_neurons, equation, threshold=threshold_value, reset=reset_value, refractory=refractory_value, method='linear'))
             Display("Assigning INTER layer: " + str(layer))
+
+# Connect the synapses of a layer
+def Connect_Synapses(layer):
+    global synapse_condition, synapse_delay
+    # Connexion type between layers.
+    if synapse_condition != "":
+        synapses[layer-1].connect(condition=synapse_condition) 
+    else:
+        synapses[layer-1].connect() 
+    # A delay is defined to better visualize graphics (no line overlapping).      
+    synapses[layer-1].delay = 'synapse_number*'+synapse_delay+'*ms'
+    Display("Assigning SYNAPSES between layer: " + str(layer-1) + " and layer " + str(layer))
+    
 
 # Create the synapses (from xml)
 def Create_Synpase():
@@ -215,22 +228,21 @@ def Create_Synpase():
         layer = layer_index(neuron.getparent().get("type")) 
         #print "Layer: " + str(layer)
         if layer != SENSORY_LAYER :
-            layer_from = layer_index(neuron.get("layer"))
+            layer_from = layer - 1
             layer_to = layer
-            neuron_from = neuron.get("synapse")
-            neuron_to = neuron.get("id") 
+            the_from = neuron.get("synapse")
+            the_to = neuron.get("id") 
             the_weights_str = neuron.get("weight")
             the_weights = the_weights_str.split(',')
             synapses.append(Synapses(neurons[layer_from], neurons[layer_to], model='w: 1', on_pre='v += w', multisynaptic_index = 'synapse_number'))             
-            str_connect = "i="+str(neuron_from)+" j="+str(neuron_to)
-            print "Synapse:  From: " + str(layer_from) + " To: " + str(layer_to) + " condition: " + str_connect + " synapses: " + the_weights_str
-            synapses[syn_no].connect(i=eval(neuron_from), j=eval(neuron_to))
+            str_connect = "i="+str(the_from)+" j="+str(the_to)
+            #print "Synapse:  From: " + str(layer_from) + " To: " + str(layer_to) + " condition: " + str_connect + " synapses: " + the_weights_str
+            synapses[syn_no].connect(i=eval(the_from), j=eval(the_to))
+            #print str(len(the_weights))
             for i in range (0, len(the_weights)):
-                #print "w: " + str(eval(the_weights[i]))
+                #print eval(the_weights[i])
                 synapses[syn_no].w[i] = eval(the_weights[i]) 
             syn_no += 1
-    #sys.exit(1)    
-
 
 # Simulation of SNN
 def Simulation():
@@ -250,11 +262,10 @@ def Simulation():
     # Main loop.  Inifite if RUN mode.   Quit after X iteration if LEARNING mode. 
     theExit = False
     while True: 
-        cycle_msg = "\n"
         # Start the cycle and the timer.
         start = time.time()
         time.clock()
-        
+        display_chrono(start, "BEGIN CYCLE")
 
         # Restore initial SNN and monitors
         net.restore()
@@ -267,16 +278,15 @@ def Simulation():
         for k in range(0,sensory_neurons): 
             neurons[SENSORY_LAYER].v[k] = frames_assignation[k]   # Only v of the sensory neurons
             neurons[SENSORY_LAYER].I[k] = input_drive_current 
-            #rospy.loginfo("neuron " + str(k) + " v. " + str(neurons[SENSORY_LAYER].v[k])) 
-            cycle_msg += "neuron " + str(k) + " v. " + str(neurons[SENSORY_LAYER].v[k]) + "\n"
+            rospy.loginfo("neuron " + str(k) + " v. " + str(neurons[SENSORY_LAYER].v[k])) 
         init_frames_in()
         # Simulation execution
         net.run(simulation_lenght_ms)
                       
         # Publish on the output topic
         for y in range(0, motor_neurons):
-            #rospy.loginfo("Values to publish for neuron " + str(y) + " : " + str(len(stateMotor.v[y])))
-            #rospy.loginfo("Neuron: " + str(y) + " Spikes: " + str(spikeMonitor.num_spikes))
+            rospy.loginfo("Values to publish for neuron " + str(y) + " : " + str(len(stateMotor.v[y])))
+            rospy.loginfo("Number of spikes: " + str(spikeMonitor.num_spikes))
             # publish volts
             voltsToPublish = Float32MultiArray()
             voltsToPublish.data = stateMotor.v[y]
@@ -284,14 +294,12 @@ def Simulation():
             # publish spikes    
             nb_spikes = sum(spikeNo == y for spikeNo in spikeMonitor.i)
             topics_motor_spikes[y].publish(nb_spikes)
-            cycle_msg += "Neuron: " + str(y) + " Spikes: " + str(nb_spikes) + "\n"
         topic_simulation_lenght.publish(simulation_lenght_int)
         #rospy.loginfo("Transmitted voltage values: "  + str(len(stateMotor.v[0])))
 
         # End of the cycle
-        os.system("clear")
-        display_chrono(start, "LAST CYCLE DATA:")    
-        Display(cycle_msg)
+        display_chrono(start, "END OF CYCLE")    
+        Display("-----------")
                 
 
 # MAIN SSN Functions

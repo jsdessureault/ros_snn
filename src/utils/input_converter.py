@@ -28,6 +28,8 @@ p_field = []
 p_min = []
 p_max = []
 out_topic = []
+
+
 for x in range (0, topics_to_convert):
     p_topic.append(rospy.get_param("~input_topic_"+str(x+1))) 
     p_type.append(rospy.get_param("~topic_type_"+str(x+1)))
@@ -53,7 +55,7 @@ if verbose:
 
 for x in range (0, topics_to_convert):
     rospy.Subscriber(p_topic[x], eval(p_type[x]) , callback, x)
-    out_topic.append(rospy.Publisher('/'+SNNname+'_'+str(x+1) + "_snn_in", String, queue_size=100))
+    out_topic.append(rospy.Publisher('/'+SNNname+'_'+str(x+1) + "_snn_in", String, queue_size=1))
     #print "Declaration du topic: " + '/ssn_in_'+SNNname+'_'+str(x+1)
 
 rospy.spin()

@@ -1,0 +1,3 @@
+rosbag play -l inputx.bag
+
+-l: loop

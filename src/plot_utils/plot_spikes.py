@@ -16,7 +16,7 @@ xml = rospy.get_param("~xml")
 SNNname = rospy.get_param("~SNNname")
 
 x_lim = 50
-y_lim = 10
+y_lim = 5
 nb_spikes = []
 times = []
 iTime = []

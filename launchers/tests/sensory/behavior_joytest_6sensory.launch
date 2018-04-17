@@ -1,0 +1,55 @@
+<launch>
+   <node name="SNN" pkg="ros_snn" type="SNN.py" output="screen" respawn="false" required="true">
+    <param name="path" value="/home/pi/ros_catkin_ws/src/ros_snn/snn/"/>     <!-- path where the trained SNN is saved -->   
+    <param name="SNNname" value="joytest"/> 			    <!-- Name of the SNN -->
+    <param name="verbose" type="bool" value="True"/>		<!-- Will display process if True -->	
+    <param name="xml" value="snn_joytest_6sensory.xml"/> 			    <!-- Name of the xml file -->
+  </node>
+ 
+  
+  <!-- Remapping topics for sensory (input) neurons.  Quantity must match "sensory_neurons" parameter -->
+  <node name="input_converter" pkg="ros_snn" type="input_converter.py" output="screen" respawn="false" required="true">
+    <param name="SNNname" value="joytest"/> 			        <!-- Name of the SNN -->    
+    <param name="verbose" type="bool" value="True"/>		    <!-- Will display process if True -->
+    <param name="topics_to_convert" type="int" value="6"/>		    <!-- Number of sensory neurons -->    
+
+    <param name="input_topic_1" value="/joy"/>			        <!-- Topic containing the value of the input neuron -->  
+    <param name="topic_type_1" value="Joy"/>        <!-- Topic containing the type of the input neuron topic 1-->  
+    <param name="input_field_1" value=".axes[1]"/>		<!-- Field of the topic containing the value of the input neuron -->      
+    <param name="input_min_1" value="-1.0"/>		<!-- Minimum value of the MinMax function -->      
+    <param name="input_max_1" value="1.0"/>		<!-- Minimum value of the MinMax function -->      
+
+    <param name="input_topic_2" value="/joy"/>			        <!-- Topic containing the value of the input neuron -->  
+    <param name="topic_type_2" value="Joy"/>        <!-- Topic containing the type of the input neuron topic 1-->  
+    <param name="input_field_2" value=".axes[0]"/>			<!-- Field of the topic containing the value of the input neuron -->      
+    <param name="input_min_2" value="-1.0"/>		<!-- Minimum value of the MinMax function -->      
+    <param name="input_max_2" value="1.0"/>		<!-- Minimum value of the MinMax function -->  
+
+    <param name="input_topic_3" value="/joy"/>			        <!-- Topic containing the value of the input neuron -->  
+    <param name="topic_type_3" value="Joy"/>        <!-- Topic containing the type of the input neuron topic 1-->  
+    <param name="input_field_3" value=".axes[4]"/>			<!-- Field of the topic containing the value of the input neuron -->      
+    <param name="input_min_3" value="-1.0"/>		<!-- Minimum value of the MinMax function -->      
+    <param name="input_max_3" value="1.0"/>		<!-- Minimum value of the MinMax function -->  
+
+    <param name="input_topic_4" value="/joy"/>			        <!-- Topic containing the value of the input neuron -->  
+    <param name="topic_type_4" value="Joy"/>        <!-- Topic containing the type of the input neuron topic 1-->  
+    <param name="input_field_4" value=".axes[3]"/>			<!-- Field of the topic containing the value of the input neuron -->      
+    <param name="input_min_4" value="-1.0"/>		<!-- Minimum value of the MinMax function -->      
+    <param name="input_max_4" value="1.0"/>		<!-- Minimum value of the MinMax function -->  
+
+    <param name="input_topic_5" value="/joy"/>			        <!-- Topic containing the value of the input neuron -->  
+    <param name="topic_type_5" value="Joy"/>        <!-- Topic containing the type of the input neuron topic 1-->  
+    <param name="input_field_5" value=".axes[1]"/>		<!-- Field of the topic containing the value of the input neuron -->      
+    <param name="input_min_5" value="-1.0"/>		<!-- Minimum value of the MinMax function -->      
+    <param name="input_max_5" value="1.0"/>		<!-- Minimum value of the MinMax function -->      
+
+    <param name="input_topic_6" value="/joy"/>			        <!-- Topic containing the value of the input neuron -->  
+    <param name="topic_type_6" value="Joy"/>        <!-- Topic containing the type of the input neuron topic 1-->  
+    <param name="input_field_6" value=".axes[0]"/>			<!-- Field of the topic containing the value of the input neuron -->      
+    <param name="input_min_6" value="-1.0"/>		<!-- Minimum value of the MinMax function -->      
+    <param name="input_max_6" value="1.0"/>		<!-- Minimum value of the MinMax function -->  
+
+
+  </node>
+  <!--   <remap from="/joy" to="/topic_joytest"> -->  
+</launch>

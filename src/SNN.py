@@ -48,6 +48,7 @@ reset_value = 0
 refractory_value = 0* ms
 simulation_lenght_int = 0
 simulation_lenght_ms = 0* ms
+realtime_limit = 50
 
 
 # Global variable that receives the frames from the topic.
@@ -92,10 +93,11 @@ if exitSNN == True:
     sys.exit(1)    
 
 def Assing_XML():
-    global tree, MOTOR_LAYER, sensory_neurons, inter_neurons, inter_layers, motor_neurons, synapse_delay, input_drive_current, tau, threshold_value, reset_value, refractory_value, simulation_lenght_int,simulation_lenght_ms
+    global tree, MOTOR_LAYER, sensory_neurons, inter_neurons, inter_layers, motor_neurons, synapse_delay, input_drive_current, tau, threshold_value, reset_value, refractory_value, simulation_lenght_int,simulation_lenght_ms, realtime_limit
 
     for rnd in tree.xpath("/SNN"):
         synapse_delay = rnd.get("synapse_delay")
+        realtime_limit = float(rnd.get("realtime_limit"))        
         input_drive_current = float(rnd.get("input_drive_current"))
         tau = int(rnd.get("tau")) *ms
         threshold_value = rnd.get("threshold")
@@ -121,11 +123,12 @@ def Assing_XML():
 def Display_Parameters():
     # Displaying parameters to console
     global SSNname, xml, verbose, sensory_neurons, inter_neurons, motor_neurons, inter_layers,  \
-         synapse_delay, synapse_condition, input_drive_current, tau, threshold_value, refractory_value, simulation_lenght_int, pathSNN, equation
+         synapse_delay, synapse_condition, input_drive_current, tau, threshold_value, refractory_value, simulation_lenght_int, pathSNN, equation, realtime_limit
     rospy.loginfo("----Parameters received from launcher OR XML file:----")
     rospy.loginfo("SNNname: " + SNNname)
     rospy.loginfo("xml: " + xml)
     rospy.loginfo("verbose: " + str(verbose))
+    rospy.loginfo("Real time limit: " + str(realtime_limit))
     rospy.loginfo("sensory_neurons: " + str(sensory_neurons))
     rospy.loginfo("motor_neurons: " + str(motor_neurons))
     rospy.loginfo("inter_neurons: " + str(inter_neurons))
@@ -152,9 +155,10 @@ def callbackReceiveMsgFromTopic(data, sensory_nb):
 
 # Display time.  Must be called in the main SNN loop. 
 def display_chrono(start, label):    
-    global MAX_TIME_FRAME, first_frame
+    global MAX_TIME_FRAME, first_frame, realtime_limit
     value_gtz = 0.1    
     elapsed = time.time() - start
+    topic_realtime.publish(float(elapsed - realtime_limit))
     txt = "time: %.2f" % (elapsed)
     rospy.loginfo(label + " " +txt)
     if elapsed > value_gtz:
@@ -316,7 +320,7 @@ for k in range(0, motor_neurons):
     topics_motor_volts.append(rospy.Publisher('motor_volts_'+SNNname+str(k+1), Float32MultiArray, queue_size=1))
     topics_motor_spikes.append(rospy.Publisher('motor_spikes_'+SNNname+str(k+1), Float32, queue_size=1))
 topic_simulation_lenght = rospy.Publisher('simulation_lenght_'+SNNname, Int16, queue_size=1)
-
+topic_realtime = rospy.Publisher('realtime_'+SNNname, Float32, queue_size=1)
 
 SNN()
 

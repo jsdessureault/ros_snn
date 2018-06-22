@@ -2,6 +2,7 @@
 <SNN 
 	equation="" 
 	name="snn_joytest" 
+	realtime_limit="0.75"
 	synapse_delay="1.0" 
 	input_drive_current="0.1"
 	tau="10" 

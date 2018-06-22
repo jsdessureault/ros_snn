@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SNN 
+	equation="" 
+	name="snn_joytest" 
+	realtime_limit="0.75"
+	synapse_delay="1.0" 
+	input_drive_current="0.1"
+	tau="10" 
+	threshold="v>0.8" 
+	reset="v=0" 
+	refractory="5" 
+	sim_lenght="5">
+
+	<layer type="sensory" name="sensory">
+		<neuron id="0">String input</neuron>
+	</layer>
+	<layer type="motor" name="motor">
+		<neuron id="0"  synapse="0" layer="sensory" weight="1.0">Motor 1</neuron>
+	</layer>
+
+</SNN>

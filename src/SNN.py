@@ -61,13 +61,6 @@ first_frame = True
 neurons = []                # Array of neuronGroup
 synapses = []               # Array of synapses
        
-# Creation of the equation
-# LI&F equation p.110 Brian2.pdf
-#equation = '''
-#dv/dt = (v0 - v)/tau : 1 (unless refractory)
-#v0 : 1'''
-
-#equation = "dv/dt = (I - v)/tau : 1 (unless refractory) I = " + input_drive_current + " : 1"
 equation = "dv/dt = (I - v)/tau : 1 (unless refractory) I : 1"
 
 # Test parameters validity

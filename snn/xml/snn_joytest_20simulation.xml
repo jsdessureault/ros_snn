@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <SNN 
 	equation="" 
-	name="snn_joytest" 
-	realtime_limit="0.75"
+	name="snn_joytest"
+	realtime_limit="0.75" 
 	synapse_delay="1.0" 
 	input_drive_current="0.1"
 	tau="10" 
 	threshold="v>0.8" 
 	reset="v=0" 
 	refractory="5" 
-	sim_lenght="500">
+	sim_lenght="20">
 
 	<layer type="sensory" name="sensory">
 		<neuron id="0">Axe 1 Up</neuron>

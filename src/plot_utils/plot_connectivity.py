@@ -52,7 +52,7 @@ rospy.loginfo("path: " + pathSNN)
 
 # Registering node to ROS
 #rospy.init_node('node_plot_connectivity_'+SNNname, anonymous=True)
-#rospy.loginfo("SNN - Plot connectivity - " + SNNname)
+#rospy.loginfo("SNN - Plot architecture - " + SNNname)
 
 
 # Function returning the layer index
@@ -202,15 +202,15 @@ for i in range(0, nb_synapses):
     #print str(i) + " y: " +str(py) + " x: " + str(px) + " w: " + str(synapse_weight[i])
     plt.annotate('W: ' +str(synapse_weight[i]), xy=(px,py) , xytext=(px,py)) 
 
-#plt.title("Connectivity - " + name)
+#plt.title("Architecture - " + name)
 #plt.margins(y=0.8)
 plt.subplots_adjust(top=0.75)
 plt.suptitle( 
-    "Connectivity - " + name + 
-    "\nInput drive current: " + str(input_drive_current)  + " mV" + 
-    "\nThreshold: " + str(threshold_value)  + " mV" +
-    "\nTau: " + str(tau)  + " ms" +
-    "\nRefractory: " + str(refractory_value)  + " ms" +
+    "Architecture - " + name + 
+    "\nInput drive current: " + str(input_drive_current)  + " volts" + 
+    "\nThreshold: " + str(threshold_value)  + " volts" +
+    "\nTau: " + str(tau)  +
+    "\nRefractory: " + str(refractory_value) +
     "\nReset: " + str(reset_value) + " ms" + 
     "\nSimulation lenght: " + str(simulation_lenght_int) + " ms",
     ha='center', fontsize=8)

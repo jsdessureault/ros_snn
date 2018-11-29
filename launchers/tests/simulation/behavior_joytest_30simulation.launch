@@ -3,7 +3,7 @@
     <param name="path" value="/home/pi/ros_catkin_ws/src/ros_snn/snn/"/>     <!-- path where the trained SNN is saved -->   
     <param name="SNNname" value="joytest"/> 			    <!-- Name of the SNN -->
     <param name="verbose" type="bool" value="True"/>		<!-- Will display process if True -->	
-    <param name="xml" value="snn_joytest_500simulation.xml"/> 			    <!-- Name of the xml file -->
+    <param name="xml" value="snn_joytest_30simulation.xml"/> 			    <!-- Name of the xml file -->
   </node>
  
   

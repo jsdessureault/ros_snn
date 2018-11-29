@@ -1,0 +1,25 @@
+<launch>
+	<node name="plot_volts" pkg="ros_snn" type="plot_volts.py" output="screen" respawn="false">
+		<param name="path" value="/home/pi/ros_catkin_ws/src/ros_snn/snn/"/>     <!-- path where the trained SNN is saved -->   
+		<param name="xml" value="snn_stringtest.xml"/> 			    <!-- Name of the xml file -->
+		<param name="SNNname" value="stringtest"/>
+	</node>
+	<node name="plot_spikes" pkg="ros_snn" type="plot_spikes.py" output="screen" respawn="false">
+		<param name="SNNname" value="stringtest"/>
+		<param name="path" value="/home/pi/ros_catkin_ws/src/ros_snn/snn/"/>     <!-- path where the trained SNN is saved -->   
+		<param name="xml" value="snn_stringtest.xml"/> 			    <!-- Name of the xml file -->
+	</node>
+ 	<node name="plot_input" pkg="ros_snn" type="plot_input.py" output="screen" respawn="false">
+		<param name="path" value="/home/pi/ros_catkin_ws/src/ros_snn/snn/"/>     <!-- path where the trained SNN is saved -->   
+		<param name="xml" value="snn_stringtest.xml"/> 			    <!-- Name of the xml file -->
+		<param name="SNNname" value="stringtest"/>
+	</node>
+	<node name="plot_connectivity" pkg="ros_snn" type="plot_connectivity.py" output="screen" respawn="false" required="true">
+    		<param name="path" value="/home/pi/ros_catkin_ws/src/ros_snn/snn/"/>     <!-- path where the trained SNN is saved -->   
+		    <param name="SNNname" value="stringtest"/> 			    <!-- Name of the SNN -->
+		    <param name="xml" value="snn_stringtest.xml"/> 			    <!-- Name of the xml file --> 
+  	</node>
+
+</launch>
+
+

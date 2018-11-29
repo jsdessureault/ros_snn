@@ -11,7 +11,7 @@
   <node name="input_converter" pkg="ros_snn" type="input_converter.py" output="screen" respawn="false" required="true">
     <param name="SNNname" value="joytest"/> 			        <!-- Name of the SNN -->    
     <param name="verbose" type="bool" value="True"/>		    <!-- Will display process if True -->
-    <param name="topics_to_convert" type="int" value="5"/>		    <!-- Number of sensory neurons -->    
+    <param name="topics_to_convert" type="int" value="4"/>		    <!-- Number of sensory neurons -->    
     <param name="path" value="/home/pi/ros_catkin_ws/src/ros_snn/snn/"/>     <!-- path where the trained SNN is saved -->  
 
     <param name="input_topic_1" value="/joy"/>			        <!-- Topic containing the value of the input neuron -->  
@@ -41,14 +41,6 @@
     <param name="input_min_4" value="-1.0"/>		<!-- Minimum value of the MinMax function -->      
     <param name="input_max_4" value="1.0"/>		<!-- Minimum value of the MinMax function -->  
     <param name="stringfile_4" value=""/>		<!-- Definition of the strings (if defined) --> 
-
-    <param name="input_topic_5" value="/strcommand"/>			        <!-- Topic containing the value of the input neuron -->  
-    <param name="topic_type_5" value="String"/>        <!-- Topic containing the type of the input neuron topic 1-->  
-    <param name="input_field_5" value=".data"/>			<!-- Field of the topic containing the value of the input neuron -->      
-    <param name="input_min_5" value="-1.0"/>		<!-- Minimum value of the MinMax function -->      
-    <param name="input_max_5" value="1.0"/>		<!-- Minimum value of the MinMax function -->  
-    <param name="stringfile_5" value="string2snn.csv"/>		<!-- Definition of the strings (if defined) --> 
-
 
 
   </node>

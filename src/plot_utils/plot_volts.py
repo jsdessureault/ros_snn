@@ -38,7 +38,7 @@ title = "MOTOR voltage for "+SNNname
 plt.title(title)
 plt.xlabel("Frames")
 plt.ylim(-1.2, 1.2)
-plt.ylabel("mVolts")
+plt.ylabel("volts")
 plt.xlim(0,x_lim)
 plt.grid(True)
 #legend = plt.legend()

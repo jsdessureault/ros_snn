@@ -36,7 +36,7 @@ title = "SENSORY voltage for "+SNNname
 plt.title(title)
 plt.xlabel("Frames")
 plt.ylim(0, 1.1)
-plt.ylabel("mVolts")
+plt.ylabel("volts")
 plt.xlim(0,x_lim)
 plt.grid(True)
 
